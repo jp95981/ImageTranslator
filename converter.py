@@ -4,7 +4,7 @@ import tifffile as tiff
 import scipy.signal as signal
 import scipy.ndimage as ndimage
 from typing import List, Tuple, Dict
-
+import time
 class NoneSelected(Exception):
     pass
 
@@ -20,6 +20,7 @@ class Converter:
         self._find_translations()
     
     def _stack_images(self) -> None:
+        start = time.time()
         for i, dir in enumerate(self.dirs):
             for name in self.filenames:
                 location = os.path.join(self.data_loc, dir)
@@ -40,6 +41,7 @@ class Converter:
                     self.hoechst.append(res)
 
                 tiff.imsave(save_path , res)
+        print(f"Time taken to stack images: {time.time() - start}")
     
     def _cross_image(self, im1: np.ndarray, im2: np.ndarray) -> np.ndarray:
         im1 = im1 - np.mean(im1)
@@ -54,22 +56,29 @@ class Converter:
             self.translations[self.dirs[i]] = trans
         self.hoechst = [] # clearing them out of memory to save space 
     
+    def shift_image(self, im1: np.ndarray, rnd: str) -> np.ndarray:
+        start = time.time()
+        shiffted = ndimage.shift(im1, self.translations[rnd])
+        print(f"Time taken to shift image: {time.time() - start}")
+        return shiffted
+
     def overlay(self, images: Dict) -> np.ndarray:
         """ Overlay the images """
+        start = time.time()
         stacked = []
-        for key in images:
-            for image in images[key]:
+        for rnd in images:
+            for image in images[rnd]:
                 image = image.copy()
-                if key != self.dirs[0]: # If not in the first round, then w need to shift the image
-                    print("Shifting: ", key, "By: ", self.translations[key])
-                    print(self.translations)
-                    image = ndimage.shift(image, self.translations[key])
+                if rnd != self.dirs[0]: # If not in the first round, then w need to shift the image
+                    image = self.shift_image(image, rnd)
                 stacked.append(image)
         if len(stacked) == 0:
             raise NoneSelected("No images selected")
 
         stack = np.stack(stacked, axis=0)
-        return np.max(stack, axis=0)
+        max_stack =  np.max(stack, axis=0)
+        print(f"Time taken to overlay images: {time.time() - start}")
+        return max_stack
 
     def save(self, image: np.ndarray, name: str) -> None:
         """ Save the image """
