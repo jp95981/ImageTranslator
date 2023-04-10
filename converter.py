@@ -4,6 +4,7 @@ import tifffile as tiff
 import scipy.signal as signal
 import scipy.ndimage as ndimage
 from typing import List, Tuple, Dict
+import cv2 as cv
 import time
 class NoneSelected(Exception):
     pass
@@ -58,7 +59,10 @@ class Converter:
     
     def shift_image(self, im1: np.ndarray, rnd: str) -> np.ndarray:
         start = time.time()
-        shiffted = ndimage.shift(im1, self.translations[rnd])
+        print(self.translations[rnd])
+        x, y = self.translations[rnd]
+        transform = np.float32([[1,0, -x], [0,1, -y]])
+        shiffted = cv.warpAffine(im1, transform, (im1.shape[0], im1.shape[1]))
         print(f"Time taken to shift image: {time.time() - start}")
         return shiffted
 
