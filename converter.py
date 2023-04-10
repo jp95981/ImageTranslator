@@ -4,7 +4,7 @@ import tifffile as tiff
 import scipy.signal as signal
 import scipy.ndimage as ndimage
 from typing import List, Tuple, Dict
-
+import cv2 as cv
 class NoneSelected(Exception):
     pass
 
@@ -54,22 +54,28 @@ class Converter:
             self.translations[self.dirs[i]] = trans
         self.hoechst = [] # clearing them out of memory to save space 
     
+    def shift_image(self, im1: np.ndarray, rnd: str) -> np.ndarray:
+        print(self.translations[rnd])
+        x, y = self.translations[rnd]
+        transform = np.float32([[1,0, -x], [0,1, -y]])
+        shiffted = cv.warpAffine(im1, transform, (im1.shape[0], im1.shape[1]))
+        return shiffted
+
     def overlay(self, images: Dict) -> np.ndarray:
         """ Overlay the images """
         stacked = []
-        for key in images:
-            for image in images[key]:
+        for rnd in images:
+            for image in images[rnd]:
                 image = image.copy()
-                if key != self.dirs[0]: # If not in the first round, then w need to shift the image
-                    print("Shifting: ", key, "By: ", self.translations[key])
-                    print(self.translations)
-                    image = ndimage.shift(image, self.translations[key])
+                if rnd != self.dirs[0]: # If not in the first round, then w need to shift the image
+                    image = self.shift_image(image, rnd)
                 stacked.append(image)
         if len(stacked) == 0:
             raise NoneSelected("No images selected")
 
         stack = np.stack(stacked, axis=0)
-        return np.max(stack, axis=0)
+        max_stack =  np.max(stack, axis=0)
+        return max_stack
 
     def save(self, image: np.ndarray, name: str) -> None:
         """ Save the image """
