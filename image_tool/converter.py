@@ -78,17 +78,11 @@ class Converter:
         For each round find all the images of the same well and stack them together
         """
 
-        for i, round_directory_name in enumerate(
-            self.round_directories
-        ):  # [Rnd1, Rnd2, Rnd3]
+        for i, round_directory_name in enumerate(self.round_directories):
             round_directory = Path.joinpath(
                 self.proccess_data_location, round_directory_name
-            )  # /Users/${USER}/Documents/LD_MULTIPLEX/data/Rnd1
-            print(f"\nNew round path: {self.proccess_data_location}")
-            print(f"Round directory: {round_directory}")
-            print(f"round directory name: {round_directory_name}\n")
+            )
             round_directory.mkdir(exist_ok=True)
-            # [Alexa 488, Alexa 488z1, Alexa 488z2, Alexa 647, Alexa 647z1, Alexa 647z2]
             for name in self.filenames:
                 raw_image_location: Path = self.data_loc.joinpath(round_directory_name)
                 all_tiffs_in_folder = os.listdir(raw_image_location)
@@ -103,13 +97,9 @@ class Converter:
                     res: npt.NDArray[np.float64] = np.max(images, axis=0)
                     tiff_name: ImageName = ImageName(f"{name}_{i}.tiff")
                     self.all_tiffs[round_directory_name].append(tiff_name)
-                    print(f"Tiff name: {tiff_name}")
                     if name == "HOECHST 33342":
                         self.shifters.append(res)
-
-                    print(f"Round directory: {round_directory}")
                     save_directory = round_directory.joinpath(tiff_name)
-                    # print(f"Save directory: {save_directory}")
                     tiff.imwrite(save_directory, res)
 
     def _cross_image(self, im1: np.ndarray, im2: np.ndarray) -> np.ndarray:
@@ -155,7 +145,6 @@ class Converter:
         Returns:
             np.ndarray: Shifted image
         """
-        print(self.translations[rnd])
         x, y = self.translations[rnd]
         transform = np.float32([[1, 0, -x], [0, 1, -y]])  # type: ignore
         shifted = cv.warpAffine(im1, transform, (im1.shape[0], im1.shape[1]))

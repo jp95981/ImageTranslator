@@ -1,11 +1,15 @@
 import click
 import gui as GUI
+import converter
 
 
 def _headless(_root_file_path: str) -> None:
     print(
         "Headless mode will only attempt to traverse the file directory and align+save the images."
     )
+    tool = converter.Converter()
+    tool.shift_all()
+    print("All images shifted")
 
 
 def _gui(root_file_path: str) -> None:
@@ -17,7 +21,7 @@ def _gui(root_file_path: str) -> None:
 @click.option("--headless", default=False, help="Headless mode on(True) or off(False)")
 @click.option(
     "--root-file-path",
-    default=".",
+    default="",
     help="Set the location where the data is stored, the directory",
 )
 def main(headless: bool, root_file_path: str) -> None:
@@ -30,7 +34,10 @@ def main(headless: bool, root_file_path: str) -> None:
     print(f"\t- Root file location: {root_file_path}")
 
     if headless:
-        _headless(root_file_path)
+        if root_file_path == "":
+            print("Root file path must be selected under headless mode")
+        else:
+            _headless(root_file_path)
     else:
         _gui(root_file_path)
 
