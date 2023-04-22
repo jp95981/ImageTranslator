@@ -2,3 +2,6 @@
 *.png
 *.pyc
 *.json
+.DS_Store
+image_tool/something.ipynb
+.idea/

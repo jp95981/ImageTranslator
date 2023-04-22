@@ -1,1 +1,7 @@
-numpy, scipy-image, scipy, tifffile, matplotlib
+numpy
+scikit-image
+scipy 
+tifffile
+matplotlib
+click
+cv2
