@@ -28,13 +28,19 @@ Root directory
 2. From the root repo directory run `python image_tool/main.py` using the required mode
 3. If headless mode selected you do not need to read anymore
 4. You will see the following interface on load:
-   ![image](docs/Screenshot 2023-04-22 at 19.01.57.png)
+   <br/>
+   ![Screenshot 2023-04-22 at 19 01 57](https://user-images.githubusercontent.com/25623089/233801181-456adb53-ca50-4da4-a58f-c63b27530d1c.png)
+   <br/>
    a. Select the directory of the data
    b. Click on the option you want
 5. If "Overlay tool" selected you will see the following interface:
-   ![image2](docs/Screenshot 2023-04-22 at 19.03.31.png)
+    <br/>
+    ![Screenshot 2023-04-22 at 19 03 31](https://user-images.githubusercontent.com/25623089/233801262-5ca4153a-10bc-4549-9cc4-da8a874bc897.png)
+    <br/>
    a. Select the images you want to overlay
-   b. ![image3](docs/Screenshot 2023-04-22 at 19.04.57.png)
+    <br/>
+    ![Screenshot 2023-04-22 at 19 04 57](https://user-images.githubusercontent.com/25623089/233801271-21e310a7-fbc6-43b3-998d-751562dceaaf.png)
+    <br/>
 
 ### Options
 
@@ -59,8 +65,9 @@ class Converter():
 #### `OverlayTool` class
 
 Main GUI class which handles the overlay tool:
-![image](docs/Screenshot 2023-04-22 at 19.01.57.png)
-
+<br/>
+![Screenshot 2023-04-22 at 19 01 57](https://user-images.githubusercontent.com/25623089/233801181-456adb53-ca50-4da4-a58f-c63b27530d1c.png)
+<br/>
 1. Setup the canvas
    - Setup the buttons and fields on the page
 2. Setup and link the radio buttons for the images
@@ -76,13 +83,16 @@ Main class to handle image processing - this is due for a refactor
 
 1. Find all of the rounds within the provided folder
 2. Dive into the first folder and retrieve the image names (this should reflect all of the image names in all of the rounds)
-   a. We need to stack images of the same FOV for the same well
-   b. From the data provided, images of the same FOV are suffixed by 'z1' or 'z2', with the same well name. So we look through the first round and remove suffixes where required to find all of the wells and FOV's
-   c. Now we know all of the wells / rounds, we go through each round and stack the images and save them a new directory
-   Example:
-   If you say the data is stored in 'C:/Windows/Users/user/data', the new shifted images will be stored in 'C:/Windows/Users/user/processed_images'
+
+   - We need to stack images of the same FOV for the same well
+
+   - From the data provided, images of the same FOV are suffixed by 'z1' or 'z2', with the same well name. So we look through the first round and remove suffixes where required to find all of the wells and FOV's
+
+   - Now we know all of the wells / rounds, we go through each round and stack the images and save them a new directory
+
+   - Example: If you say the data is stored in `'C:/Windows/Users/user/data'`, the new shifted images will be stored in `'C:/Windows/Users/user/processed_images'`
+
 3. Now the images have been stacked, time to shift them. We calculate how much to translate each round by using HOECHST as a base.
-   Example:
-   There are 3 rounds 1,2,3. Each round has images of 3 wells HOECHST, Well2, Well3.
-   This means there are 3 HOECHST images. We find the translation between round 1 HOECHST and round 2 HOECHST, and the translation between round 1 HOECHST and round 3 HOECHST. These translations are then saved for later and used to translate all images from that round.
-4. Now we know how to translate the images, when we want to shift the images, we use the translations from step 3 to shift the images from all the rounds. If you say the data is stored in 'C:/Windows/Users/user/data', the new shifted images will be stored in 'C:/Windows/Users/user/shifted_images'
+   - Example: There are 3 rounds 1,2,3. Each round has images of 3 wells HOECHST, Well2, Well3.
+     This means there are 3 HOECHST images. We find the translation between round 1 HOECHST and round 2 HOECHST, and the translation between round 1 HOECHST and round 3 HOECHST. These translations are then saved for later and used to translate all images from that round.
+4. Now we know how to translate the images, when we want to shift the images, we use the translations from step 3 to shift the images from all the rounds. If you say the data is stored in `'C:/Windows/Users/user/data'`, the new shifted images will be stored in `'C:/Windows/Users/user/shifted_images'`
