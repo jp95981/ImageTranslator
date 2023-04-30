@@ -4,4 +4,5 @@ scipy
 tifffile
 matplotlib
 click
-cv2
+opencv-python
+imagecodecs
