@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-from helper import ImageName
+from image import Image
 
 
 class OverlayTool:
@@ -38,14 +38,14 @@ class OverlayTool:
         for col, directory in enumerate(self.converter.round_directories):
             frame1 = tk.LabelFrame(self.root, text=directory)
             frame1.grid(column=col, row=1, padx=5, pady=5, ipadx=5, ipady=5)
-            for row, name in enumerate(self.converter.all_tiffs[directory]):
+            for row, name in enumerate(self.converter.round_to_tiffs_dict[directory]):
                 var = tk.IntVar()
-                tk.Checkbutton(frame1, text=name, variable=var).grid(
+                tk.Checkbutton(frame1, text=name.image_path.name, variable=var).grid(
                     column=col, row=row + 1
                 )
                 self.radio_buttons[directory].append(var)
 
-    def _get_selected(self) -> Dict[str, List[ImageName]]:
+    def _get_selected(self) -> Dict[str, List[Image]]:
         selected = {}
         for rnds in self.radio_buttons:
             selected[rnds] = []
@@ -53,7 +53,7 @@ class OverlayTool:
                 self.radio_buttons[rnds]
             ):  # var = the radio button / the image
                 if var.get() == 1:
-                    selected[rnds].append(self.converter.all_tiffs[rnds][pos])
+                    selected[rnds].append(self.converter.round_to_tiffs_dict[rnds][pos])
         return selected
 
     def _overlay(self):
@@ -78,8 +78,8 @@ class OverlayTool:
         self.canvas.get_tk_widget().grid(column=0, row=4, columnspan=2, padx=5, pady=5)
 
     def _save(self):
-        if (overlayed_image := self._overlay()) is not None:
-            self.converter.save(overlayed_image, "test.png")
+        if (overlay_image := self._overlay()) is not None:
+            self.converter.save(overlay_image, "test.png")
             messagebox.showinfo("Saved", "Image saved")
         else:
             messagebox.showerror("Error", "Image not saved, something went wrong")
@@ -94,7 +94,7 @@ def shift_all(data_path: str):
     """
     Steps to shift all images
     1) All images need to be stacked i.e. images of different views should be 
-        overlayed together
+        overlaid together
     2) Compare the stacked images from 1) from Rnd2 onwards to Rnd1 and figure out the\
         translation. This way all images are aligned with those from round 1
     3) Once these translations have been found, then we can shift all the images and save them

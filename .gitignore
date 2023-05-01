@@ -5,3 +5,9 @@
 .DS_Store
 image_tool/something.ipynb
 .idea/
+/image_tool/__init__.py
+/data.zip
+/data_v2/drive-download-20230501T222623Z-020.zip
+/data_v2/drive-download-20230501T222623Z-021.zip
+/run_app_mac.command
+/run_app_windows.
